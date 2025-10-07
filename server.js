@@ -52,12 +52,16 @@ app.use((req, res, next) => {
   console.log(`🔵 ${req.method} ${req.url}`);
   console.log(`⏰ Time: ${new Date().toISOString()}`);
   console.log(`📍 IP: ${req.ip}`);
-  if (Object.keys(req.body).length > 0) {
-    console.log('📦 Body:', JSON.stringify(req.body, null, 2));
-  }
-  if (Object.keys(req.query).length > 0) {
-    console.log('🔍 Query:', req.query);
-  }
+  try {
+    if (req.body && typeof req.body === 'object' && Object.keys(req.body).length > 0) {
+      console.log('📦 Body:', JSON.stringify(req.body, null, 2));
+    }
+  } catch (_) {}
+  try {
+    if (req.query && typeof req.query === 'object' && Object.keys(req.query).length > 0) {
+      console.log('🔍 Query:', req.query);
+    }
+  } catch (_) {}
   console.log('='.repeat(50));
   next();
 });
@@ -95,6 +99,7 @@ app.use('/api/ai-tools', require('./routes/ai-tools'));
 app.use('/api/subscriptions', require('./routes/subscriptions'));
 app.use('/api/export', require('./routes/export'));
 app.use('/api/upload', require('./routes/upload'));
+ app.use('/api/design-files', require('./routes/design-files'));
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
