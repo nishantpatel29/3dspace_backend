@@ -147,3 +147,4 @@ projectSchema.methods.removeCollaborator = function(userId) {
 module.exports = mongoose.model('Project', projectSchema);
 
 
+

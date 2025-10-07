@@ -352,3 +352,4 @@ furnitureSchema.statics.getFeatured = function(limit = 10) {
 module.exports = mongoose.model('Furniture', furnitureSchema);
 
 
+
