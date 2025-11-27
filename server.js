@@ -32,8 +32,28 @@ app.use(helmet());
 app.use(compression());
 
 // CORS configuration - MUST be before body parser
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://localhost:3000',
+  'https://designspace3d.netlify.app'
+];
+
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.includes(origin) || process.env.FRONTEND_URL === origin) {
+      callback(null, true);
+    } else {
+      // In development, allow localhost with any port
+      if (process.env.NODE_ENV === 'development' && origin.startsWith('http://localhost:')) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    }
+  },
   credentials: true
 }));
 
@@ -91,15 +111,9 @@ mongoose.connection.on('error', (err) => {
 
 // Routes
 app.use('/api/auth', require('./routes/auth'));
-app.use('/api/projects', require('./routes/projects'));
-app.use('/api/designs', require('./routes/designs'));
-app.use('/api/templates', require('./routes/templates'));
 app.use('/api/furniture', require('./routes/furniture'));
 app.use('/api/ai-tools', require('./routes/ai-tools'));
-app.use('/api/subscriptions', require('./routes/subscriptions'));
-app.use('/api/export', require('./routes/export'));
-app.use('/api/upload', require('./routes/upload'));
- app.use('/api/design-files', require('./routes/design-files'));
+app.use('/api/design-files', require('./routes/design-files'));
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
