@@ -109,6 +109,15 @@ mongoose.connection.on('error', (err) => {
   console.error('❌ MongoDB error:', err);
 });
 
+// Simple root route
+app.get('/', (req, res) => {
+  res.json({ 
+    message: 'Server is running',
+    status: 'OK',
+    timestamp: new Date().toISOString()
+  });
+});
+
 // Routes
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/furniture', require('./routes/furniture'));
